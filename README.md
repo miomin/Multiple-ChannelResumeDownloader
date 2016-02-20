@@ -1,7 +1,8 @@
 # Multiple-ChannelResumeDownloader
 多通道断点续传下载，封装好的
-    // 下面的url是需要下载的文件在服务器上的url
-    MultiResumeDownloader multiResumeDownloader =
+    
+        // 下面的url是需要下载的文件在服务器上的url
+        MultiResumeDownloader multiResumeDownloader =
                 new MultiResumeDownloader(ExampleActivity.this,
                         "http://192.168.23.1:8080/test.pdf",
                         new MultiResumeDownloader.OnDownLoadStateListener() { // 监听MultiResumeDownloader下载过程的回调
