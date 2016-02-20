@@ -1,5 +1,5 @@
 # Multiple-ChannelResumeDownloader
-多通道断点续传下载，封装好的
+多通道断点续传下载，封装好的，默认放到SDCard的根目录
     
         // 下面的url是需要下载的文件在服务器上的url
         MultiResumeDownloader multiResumeDownloader =
