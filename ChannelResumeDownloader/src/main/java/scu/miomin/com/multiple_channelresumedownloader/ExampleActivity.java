@@ -23,7 +23,7 @@ public class ExampleActivity extends AppCompatActivity {
 
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
-    MultiResumeDownloader multiResumeDownloader;
+    MultiResumeDownTask multiResumeDownTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +37,10 @@ public class ExampleActivity extends AppCompatActivity {
         btnDown = (Button) findViewById(R.id.btnDown);
 
         // 下面的url是需要下载的文件在服务器上的url
-        multiResumeDownloader =
-                new MultiResumeDownloader(ExampleActivity.this,
+        multiResumeDownTask =
+                new MultiResumeDownTask(ExampleActivity.this,
                         "http://192.168.23.1:8080/test.pdf",
-                        new MultiResumeDownloader.OnDownLoadStateListener() { // 这是监听MultiResumeDownloader下载过程的回调
+                        new MultiResumeDownTask.OnDownLoadStateListener() { // 这是监听MultiResumeDownloader下载过程的回调
                             @Override
                             public void OnDownLoadProcessChange(int process) {
                                 Log.i(TAG, "process:" + process);
@@ -66,11 +66,11 @@ public class ExampleActivity extends AppCompatActivity {
         btnDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!multiResumeDownloader.isDownloading()) {
+                if (!multiResumeDownTask.isDownloading()) {
                     // 开始下载
-                    multiResumeDownloader.startDownload();
+                    multiResumeDownTask.startDownload();
                 } else {
-                    multiResumeDownloader.resumeDownload();
+                    multiResumeDownTask.resumeDownload();
                 }
             }
         });

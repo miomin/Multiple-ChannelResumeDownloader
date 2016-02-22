@@ -22,7 +22,7 @@ import java.util.List;
  * Created by 莫绪旻 on 16/2/20.
  * 实现多通道断点续传下载功能
  */
-public class MultiResumeDownloader {
+public class MultiResumeDownTask {
 
     // 下载完成
     private static final int DOWNLOADFINISHED = 1;
@@ -101,7 +101,7 @@ public class MultiResumeDownloader {
     private int fileLength = -1;
 
     // 构造器
-    public MultiResumeDownloader(Context context, String fileUrl, OnDownLoadStateListener onDownLoadStateListener) {
+    public MultiResumeDownTask(Context context, String fileUrl, OnDownLoadStateListener onDownLoadStateListener) {
         try {
             this.fileUrl = fileUrl;
             this.context = context;
