@@ -1,10 +1,11 @@
 # Multiple-ChannelResumeDownloader
 多通道断点续传下载库，默认把文件放到SDCard的根目录
-'''Java
-public static void main(){}
-'''
 
-    '''Java
+```Java
+public static void main(){}
+```
+
+    ```Java
         // 下面的url是需要下载的文件在服务器上的url
                 MultiResumeDownTask multiResumeDownTask =
                         new MultiResumeDownTask(ExampleActivity.this,
@@ -40,4 +41,4 @@ public static void main(){}
                 if (multiResumeDownTask.isDownloading()) {
                 
                 }
-    '''
+    ```
