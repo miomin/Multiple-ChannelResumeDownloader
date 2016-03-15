@@ -11,7 +11,7 @@ import java.net.URL;
 /**
  * Created by 莫绪旻 on 16/2/20.
  */
-public class MultiResumeDownHelper {
+public class DownHelper {
 
     // 获取需要下载的文件的长度
     public static int getFileLength(String fileUrl, Context context) {

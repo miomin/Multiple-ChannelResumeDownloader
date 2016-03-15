@@ -4,10 +4,8 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -22,45 +20,17 @@ import java.util.List;
  * Created by 莫绪旻 on 16/2/20.
  * 实现多通道断点续传下载功能
  */
-public class MultiResumeDownTask {
+public class MioMultiResumeDownTask {
 
     // 下载完成
     private static final int DOWNLOADFINISHED = 1;
+    // 下载过程跟踪进度
+    private static final int DOWNLOADPROCESS = 2;
 
     /**
      * 下载过程变化的回调
      */
-    private OnDownLoadStateListener onDownLoadStateListener;
-
-    public interface OnDownLoadStateListener {
-        /**
-         * 下载进度变化的回调
-         *
-         * @param process
-         */
-        void OnDownLoadProcessChange(int process);
-
-        /**
-         * 下载开始的回调
-         *
-         * @param process
-         */
-        void OnDownLoadStart(int process);
-
-        /**
-         * 暂停下载的回调
-         *
-         * @param process
-         */
-        void OnDownLoadResume(int process);
-
-        /**
-         * 下载完成的回调
-         *
-         * @param process
-         */
-        void OnDownLoadFinished(int process);
-    }
+    private MioDownLoadStateListener onDownLoadStateListener;
 
     // 接受下载过程数据的Handler
     public Handler mHandler = new Handler() {
@@ -69,28 +39,33 @@ public class MultiResumeDownTask {
             switch (msg.what) {
                 case DOWNLOADFINISHED:
                     // 下载完成的回调
-                    onDownLoadStateListener.OnDownLoadFinished(process);
+                    onDownLoadStateListener.OnDownLoadFinished(file);
+                    break;
+                case DOWNLOADPROCESS:
+                    onDownLoadStateListener.OnDownLoadProcessChange(process);
                     break;
             }
         }
     };
 
-    private static final String TAG = "miomin";
-
     // 记录文件下载了多少
     private int process = 0;
 
-    // 表示文件分成BLOCKCOUNT块，使用BLOCKCOUNT个单独的线程并行下载,必须大于0
-    private final int BLOCKCOUNT = 3;
+    // 表示文件分成BLOCKCOUNT块，使用BLOCKCOUNT个单独的线程并行下载,必须大于0，默认为1
+    private int BLOCKCOUNT = 6;
 
     // 表示是否正在下载
     private boolean downloading = false;
 
+    // 启动下载任务的上下文
     private Context context;
-    // file在服务端的url字符串表示
+
+    // file在服务端的url
     private String fileUrl;
-    // file在手机本地的引用
+
+    // file在手机本地的存储位置
     private File file;
+
     // file在服务端的url
     private URL url;
 
@@ -101,7 +76,7 @@ public class MultiResumeDownTask {
     private int fileLength = -1;
 
     // 构造器
-    public MultiResumeDownTask(Context context, String fileUrl, OnDownLoadStateListener onDownLoadStateListener) {
+    public MioMultiResumeDownTask(Context context, String fileUrl, MioDownLoadStateListener onDownLoadStateListener) {
         try {
             this.fileUrl = fileUrl;
             this.context = context;
@@ -121,55 +96,45 @@ public class MultiResumeDownTask {
     public void startDownload() {
         downloading = true;
         // 开始下载的回调
-        onDownLoadStateListener.OnDownLoadStart(process);
+        onDownLoadStateListener.OnDownLoadStart(fileLength);
 
         if (threadList.size() == 0) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        fileLength = MultiResumeDownHelper.getFileLength(fileUrl, context);
+                    fileLength = DownHelper.getFileLength(fileUrl, context);
 
-                        if (fileLength < 0) {
-                            Log.i(TAG, "文件不存在");
-                            return;
+                    if (fileLength < 0) {
+                        onDownLoadStateListener.OnDownLoadFailed("文件不存在");
+                        return;
+                    }
+
+                    if (!SDCardTool.ExistSDCard()) {
+                        onDownLoadStateListener.OnDownLoadFailed("SD卡不可用");
+                        return;
+                    }
+
+                    // 文件分成N个线程下载
+                    int blockSize = fileLength / BLOCKCOUNT;
+
+                    for (int i = 0; i < BLOCKCOUNT; i++) {
+                        int begin = i * blockSize;
+                        int end = (i + 1) * blockSize;
+                        // 整除BLOCKCOUNT的误差处理
+                        if (i == BLOCKCOUNT - 1) {
+                            end = fileLength;
                         }
 
-                        if (!SDCardTool.ExistSDCard()) {
-                            return;
-                        }
+                        // 初始化上下文
+                        HashMap<String, Integer> map = new HashMap<String, Integer>();
+                        map.put("begin", begin);
+                        map.put("end", end);
+                        map.put("finished", 0);
+                        threadList.add(map);
 
-                        //读写模式为rw
-                        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-                        randomAccessFile.setLength(fileLength);
-
-                        // 文件分成三个线程下载
-                        int blockSize = fileLength / BLOCKCOUNT;
-
-                        for (int i = 0; i < BLOCKCOUNT; i++) {
-                            int begin = i * blockSize;
-                            int end = (i + 1) * blockSize;
-                            // 整除BLOCKCOUNT的误差处理
-                            if (i == BLOCKCOUNT - 1) {
-                                end = fileLength;
-                            }
-
-                            // 初始化上下文
-                            HashMap<String, Integer> map = new HashMap<String, Integer>();
-                            map.put("begin", begin);
-                            map.put("end", end);
-                            map.put("finished", 0);
-                            threadList.add(map);
-
-                            //创建新的线程，下载文件
-                            Thread thread = new Thread(new DownloadRunable(i, begin, end));
-                            thread.start();
-                        }
-
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        //创建新的线程，下载文件
+                        Thread thread = new Thread(new DownloadRunable(i, begin, end));
+                        thread.start();
                     }
                 }
             }).start();
@@ -220,7 +185,6 @@ public class MultiResumeDownTask {
 
         @Override
         public void run() {
-            Log.i(TAG, "下载中：" + id);
             InputStream is = null;
             // 不同的线程要用不同的randomAccessFile对象，不能直接把主线程的randomAccessFile对象传进来，不然访问时会有
             // 冲突，可以用不同的randomAccessFile对象来操作同一个文件
@@ -248,9 +212,6 @@ public class MultiResumeDownTask {
                     updateProgress(len);
                     // 保存断点续传的上下文
                     threadList.get(id).put("finished", threadList.get(id).get("finished") + len);
-
-                    // 下载进度变化的回调
-                    onDownLoadStateListener.OnDownLoadProcessChange(process);
                 }
 
                 if (is != null) {
@@ -284,6 +245,12 @@ public class MultiResumeDownTask {
             Message message;
             message = Message.obtain();
             message.what = DOWNLOADFINISHED;
+            mHandler.sendMessage(message);
+        } else {
+            //更新下载进度
+            Message message;
+            message = Message.obtain();
+            message.what = DOWNLOADPROCESS;
             mHandler.sendMessage(message);
         }
     }

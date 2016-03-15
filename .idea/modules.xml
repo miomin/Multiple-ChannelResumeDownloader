@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ChannelResumeDownloader/ChannelResumeDownloader.iml" filepath="$PROJECT_DIR$/ChannelResumeDownloader/ChannelResumeDownloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Multiple-ChannelResumeDownloader.iml" filepath="$PROJECT_DIR$/Multiple-ChannelResumeDownloader.iml" />
+    </modules>
+  </component>
+</project>

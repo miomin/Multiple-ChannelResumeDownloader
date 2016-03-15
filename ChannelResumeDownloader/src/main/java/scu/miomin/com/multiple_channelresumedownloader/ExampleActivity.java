@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
+
 /**
  * Created by 莫绪旻 on 16/2/20.
  */
@@ -23,7 +25,7 @@ public class ExampleActivity extends AppCompatActivity {
 
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
-    MultiResumeDownTask multiResumeDownTask;
+    MioMultiResumeDownTask multiResumeDownTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,28 +40,34 @@ public class ExampleActivity extends AppCompatActivity {
 
         // 下面的url是需要下载的文件在服务器上的url
         multiResumeDownTask =
-                new MultiResumeDownTask(ExampleActivity.this,
-                        "http://192.168.23.1:8080/test.pdf",
-                        new MultiResumeDownTask.OnDownLoadStateListener() { // 这是监听MultiResumeDownloader下载过程的回调
+                new MioMultiResumeDownTask(ExampleActivity.this,
+                        "http://192.168.253.1:8080/test.pdf",
+                        new MioDownLoadStateListener() {
+                            // 这是监听MultiResumeDownloader下载过程的回调
                             @Override
                             public void OnDownLoadProcessChange(int process) {
                                 Log.i(TAG, "process:" + process);
                             }
 
                             @Override
-                            public void OnDownLoadStart(int process) {
-                                btnDown.setText("暂停下载");
+                            public void OnDownLoadStart(int fileLength) {
+                                btnDown.setText("开始下载,文件长度：" + fileLength);
                             }
 
                             @Override
                             public void OnDownLoadResume(int process) {
-                                btnDown.setText("开始下载");
+                                btnDown.setText("暂停下载,下载到：" + process);
                             }
 
                             @Override
-                            public void OnDownLoadFinished(int process) {
+                            public void OnDownLoadFinished(File file) {
                                 btnDown.setText("下载完成");
                                 btnDown.setEnabled(false);
+                            }
+
+                            @Override
+                            public void OnDownLoadFailed(String error) {
+                                Log.i(TAG, "下载失败:" + error);
                             }
                         });
 
