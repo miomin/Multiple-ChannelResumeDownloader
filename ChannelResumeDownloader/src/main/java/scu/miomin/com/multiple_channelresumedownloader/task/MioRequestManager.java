@@ -1,4 +1,4 @@
-package scu.miomin.com.multiple_channelresumedownloader;
+package scu.miomin.com.multiple_channelresumedownloader.task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package scu.miomin.com.multiple_channelresumedownloader;
+package scu.miomin.com.multiple_channelresumedownloader.sample;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -13,6 +13,11 @@ import android.view.View;
 import android.widget.Button;
 
 import java.io.File;
+
+import scu.miomin.com.multiple_channelresumedownloader.listener.MioDownLoadStateListener;
+import scu.miomin.com.multiple_channelresumedownloader.task.MioMultiResumeDownTask;
+import scu.miomin.com.multiple_channelresumedownloader.task.MioRequestManager;
+import scu.miomin.com.multiple_channelresumedownloader.R;
 
 /**
  * Created by 莫绪旻 on 16/2/20.

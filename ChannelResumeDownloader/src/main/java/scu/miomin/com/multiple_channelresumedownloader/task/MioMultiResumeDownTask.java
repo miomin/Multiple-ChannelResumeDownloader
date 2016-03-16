@@ -1,4 +1,4 @@
-package scu.miomin.com.multiple_channelresumedownloader;
+package scu.miomin.com.multiple_channelresumedownloader.task;
 
 import android.content.Context;
 import android.os.Environment;
@@ -15,6 +15,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import scu.miomin.com.multiple_channelresumedownloader.util.SDCardTool;
+import scu.miomin.com.multiple_channelresumedownloader.listener.MioDownLoadStateListener;
+import scu.miomin.com.multiple_channelresumedownloader.util.DownHelper;
 
 /**
  * Created by 莫绪旻 on 16/2/20.

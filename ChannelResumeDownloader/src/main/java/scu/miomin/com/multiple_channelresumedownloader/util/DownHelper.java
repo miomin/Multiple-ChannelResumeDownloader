@@ -1,4 +1,4 @@
-package scu.miomin.com.multiple_channelresumedownloader;
+package scu.miomin.com.multiple_channelresumedownloader.util;
 
 import android.content.Context;
 import android.widget.Toast;
