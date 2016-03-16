@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by miomin on 16/3/16.
+ * Created by 莫绪旻 on 16/3/16.
  */
 public class MioRequestManager {
 
