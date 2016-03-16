@@ -41,7 +41,7 @@ public class ExampleActivity extends AppCompatActivity {
         // 下面的url是需要下载的文件在服务器上的url
         multiResumeDownTask =
                 new MioMultiResumeDownTask(ExampleActivity.this,
-                        "http://192.168.253.1:8080/test.pdf",
+                        "http://192.168.253.1:8080/test.pdf", toString(),
                         new MioDownLoadStateListener() {
                             // 这是监听MultiResumeDownloader下载过程的回调
                             @Override
@@ -82,6 +82,13 @@ public class ExampleActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 实现request与Activity生命周期绑定
+        MioRequestManager.getInstance().cancelRequest(toString());
     }
 
     // 申请需要的运行时权限

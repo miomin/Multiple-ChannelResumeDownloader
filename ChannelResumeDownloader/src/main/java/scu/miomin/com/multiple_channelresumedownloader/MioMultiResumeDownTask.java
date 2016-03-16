@@ -32,6 +32,17 @@ public class MioMultiResumeDownTask {
      */
     private MioDownLoadStateListener onDownLoadStateListener;
 
+    // 用tag将下载的task与activity绑定
+    private String tag;
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
     // 接受下载过程数据的Handler
     public Handler mHandler = new Handler() {
         @Override
@@ -76,7 +87,7 @@ public class MioMultiResumeDownTask {
     private int fileLength = -1;
 
     // 构造器
-    public MioMultiResumeDownTask(Context context, String fileUrl, MioDownLoadStateListener onDownLoadStateListener) {
+    public MioMultiResumeDownTask(Context context, String fileUrl,String tag, MioDownLoadStateListener onDownLoadStateListener) {
         try {
             this.fileUrl = fileUrl;
             this.context = context;
@@ -85,6 +96,7 @@ public class MioMultiResumeDownTask {
             this.url = new URL(fileUrl);
             this.threadList = new ArrayList<>();
             this.onDownLoadStateListener = onDownLoadStateListener;
+            this.tag = tag;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -241,7 +253,7 @@ public class MioMultiResumeDownTask {
     synchronized private void updateProgress(int add) {
         process += add;
         if (process >= fileLength) {
-            // 工作线程中不回调,通过handler通知
+            // 通知下载完成
             Message message;
             message = Message.obtain();
             message.what = DOWNLOADFINISHED;
