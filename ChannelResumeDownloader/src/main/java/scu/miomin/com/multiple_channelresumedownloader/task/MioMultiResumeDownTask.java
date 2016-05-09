@@ -109,7 +109,7 @@ public class MioMultiResumeDownTask {
     /**
      * 开始下载
      */
-    public void startDownload() {
+    protected void startDownload() {
         downloading = true;
         // 开始下载的回调
         onDownLoadStateListener.OnDownLoadStart(fileLength);
@@ -170,7 +170,7 @@ public class MioMultiResumeDownTask {
     /**
      * 暂停下载
      */
-    public void resumeDownload() {
+    protected void resumeDownload() {
         downloading = false;
         // 暂停下载的回调
         onDownLoadStateListener.OnDownLoadResume(process);

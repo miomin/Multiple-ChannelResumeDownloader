@@ -25,11 +25,17 @@ public class MioRequestManager {
 
     // 执行文件下载任务
     public void excuteDownTask(MioMultiResumeDownTask task) {
+        task.startDownload();
         if (!downtaskMap.containsKey(task.getTag())) {
             ArrayList<MioMultiResumeDownTask> downTasks = new ArrayList<>();
             downtaskMap.put(task.getTag(), downTasks);
         }
         downtaskMap.get(task.getTag()).add(task);
+    }
+
+    // 暂停下载任务
+    public void resumeDownTask(MioMultiResumeDownTask task) {
+        task.resumeDownload();
     }
 
     // 取消与tag的Activity相关的所有任务

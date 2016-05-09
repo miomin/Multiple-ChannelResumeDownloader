@@ -81,9 +81,10 @@ public class ExampleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!multiResumeDownTask.isDownloading()) {
                     // 开始下载
-                    multiResumeDownTask.startDownload();
+                    MioRequestManager.getInstance().excuteDownTask(multiResumeDownTask);
                 } else {
-                    multiResumeDownTask.resumeDownload();
+                    // 暂停下载
+                    MioRequestManager.getInstance().resumeDownTask(multiResumeDownTask);
                 }
             }
         });

@@ -45,15 +45,12 @@ multiResumeDownTask =
 
 ### 启动下载任务
 ```Java
-multiResumeDownTask.startDownload();
+MioRequestManager.getInstance().excuteDownTask(multiResumeDownTask);
 ```
+
 ### 暂停下载任务
 ```Java
-multiResumeDownTask.resumeDownload();
-```
-### 判断是否正在加载
-```Java
-if (multiResumeDownTask.isDownloading()) {}
+MioRequestManager.getInstance().resumeDownTask(multiResumeDownTask);
 ```
 
 ### 绑定生命周期 
